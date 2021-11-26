@@ -18,18 +18,18 @@ namespace KanbanBoardApi.Dal
             this.db = db;
             this.laneRepository = laneRepository;
         }
-            
 
-        public async Task<IReadOnlyCollection<CardDto>> GetCards()
+        public async Task<IReadOnlyCollection<CardDto>> ListCards()
         {
             return await db.Cards
                 .Select(dbRecord => dbRecord.GetCardDto())
+                .AsNoTracking()
                 .ToArrayAsync();
         }
 
         public async Task<CardDto> GetCardOrNull(int id)
         {
-            var card = await db.Cards.FindAsync(id);
+            var card = await db.Cards.FirstOrDefaultAsync(c => c.ID == id);
             return card?.GetCardDto();
         }
 
@@ -141,9 +141,7 @@ namespace KanbanBoardApi.Dal
             });
         }
 
-    }
-
-    
+    }    
 
     internal static class CardRepositoryExtensions
     {
@@ -156,6 +154,4 @@ namespace KanbanBoardApi.Dal
 
         
     }
-
-
 }

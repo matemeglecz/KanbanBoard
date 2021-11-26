@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using KanbanBoardApi.Data;
 using KanbanBoardApi.Dal;
-using Microsoft.AspNetCore.Cors;
+using KanbanBoardApi.Dtos;
 
 namespace KanbanBoardApi.Controllers
 {
@@ -15,44 +10,36 @@ namespace KanbanBoardApi.Controllers
     [ApiController]
     public class LanesController : ControllerBase
     {
-        private readonly KanbanBoardContext _context;
+        //private readonly KanbanBoardContext _context;
+        private readonly ILaneRepository laneRepository;
 
-        public LanesController(KanbanBoardContext context)
+        public LanesController(ILaneRepository laneRepository)
         {
-            _context = context;
+            this.laneRepository = laneRepository;
         }
 
         // GET: api/Lanes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Lane>>> GetLanes()
-        {
-            return await _context.Lanes
-                .Include(b => b.Cards)
-                .AsNoTracking()
-                .ToListAsync();
-        }
+        public async Task<IEnumerable<GetLaneDto>> GetLanes() => await laneRepository.ListLanes();
 
         // GET: api/Lanes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Lane>> GetLane(int id)
+        public async Task<ActionResult<GetLaneDto>> GetLane(int id)
         {
-            var lane = await _context.Lanes
-                .Include(b => b.Cards)
-                .AsNoTracking()
-                .FirstAsync(b => b.ID == id);
+            var lane = await laneRepository.GetLaneOrNull(id);
 
             if (lane == null)
             {
                 return NotFound();
             }
 
-            return lane;
+            return Ok(lane);
         }
 
         // PUT: api/Lanes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutLane(int id, Lane lane)
+       /* [HttpPut("{id}")]
+        public async Task<IActionResult> PutLane(int id, AddEditLaneDto lane)
         {
             if (id != lane.ID)
             {
@@ -78,38 +65,23 @@ namespace KanbanBoardApi.Controllers
             }
 
             return NoContent();
-        }
+        }*/
 
         // POST: api/Lanes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Lane>> PostLane(Lane lane)
+        public async Task<ActionResult<GetLaneDto>> PostLane(AddLaneDto laneDto)
         {
-            _context.Lanes.Add(lane);
-            await _context.SaveChangesAsync();
-
+            var lane = await laneRepository.AddLane(laneDto);
             return CreatedAtAction(nameof(GetLane), new { id = lane.ID }, lane);
         }
 
         // DELETE: api/Lanes/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLane(int id)
-        {
-            var lane = await _context.Lanes.FindAsync(id);
-            if (lane == null)
-            {
-                return NotFound();
-            }
-
-            _context.Lanes.Remove(lane);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+        {         
+            return await laneRepository.DeleteLane(id) ? NoContent() : NotFound();
         }
-
-        private bool LaneExists(int id)
-        {
-            return _context.Lanes.Any(e => e.ID == id);
-        }
+      
     }
 }

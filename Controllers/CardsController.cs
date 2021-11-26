@@ -15,28 +15,26 @@ namespace KanbanBoardApi.Controllers
     [ApiController]
     public class CardsController : ControllerBase
     {
-        private readonly KanbanBoardContext _context;
+        
         private readonly ICardRepository cardRepository;
         private readonly ILaneRepository laneRepository;
 
-        public CardsController(KanbanBoardContext context, ICardRepository cardRepository, ILaneRepository laneRepository)
+        public CardsController(ICardRepository cardRepository, ILaneRepository laneRepository)
         {
-            _context = context;
             this.cardRepository = cardRepository;
             this.laneRepository = laneRepository;
         }
 
         // GET: api/Cards
         [HttpGet]
-        public async Task<IEnumerable<CardDto>> GetCards() => await cardRepository.GetCards();
+        public async Task<IEnumerable<CardDto>> GetCards() => await cardRepository.ListCards();
 
         // GET: api/Cards/5
         [HttpGet("{id}")]
         public async Task<ActionResult<CardDto>> GetCard(int id)
         {
             var card = await cardRepository.GetCardOrNull(id);
-            Console.WriteLine(card.Title);
-
+ 
             if (card == null)
             {
                 return NotFound();
@@ -62,7 +60,7 @@ namespace KanbanBoardApi.Controllers
         // POST: api/Cards
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Card>> PostCard(CardDto card)
+        public async Task<ActionResult<CardDto>> PostCard(CardDto card)
         {            
             if (!laneRepository.LaneExists(card.LaneID))
             {
@@ -78,11 +76,7 @@ namespace KanbanBoardApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCard(int id)
         {
-            var res = await cardRepository.DeleteCard(id);
-            if (!res)
-                return NotFound();
-
-            return NoContent();
+            return await cardRepository.DeleteCard(id) ? NoContent() : NotFound();
         }
         
     }

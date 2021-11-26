@@ -1,4 +1,4 @@
-﻿using KanbanBoardApi.Dal;
+﻿using KanbanBoardApi.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
