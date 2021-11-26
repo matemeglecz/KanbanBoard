@@ -1,4 +1,4 @@
-﻿using KanbanBoardApi.Models;
+﻿using KanbanBoardApi.Dal;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,14 +14,14 @@ namespace KanbanBoardApi.Data
         {
         }
 
-        public DbSet<Board> Boards { get; set; }
+        public DbSet<Lane> Lanes { get; set; }
         public DbSet<Card> Cards { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Board>().ToTable("Board")
+            modelBuilder.Entity<Lane>().ToTable("Lane")
                 .HasMany(b => b.Cards)
-                .WithOne(c => c.Board);
+                .WithOne(c => c.Lane);
 
             modelBuilder.Entity<Card>().ToTable("Card")
                 .Property(c => c.Description)

@@ -1,20 +1,14 @@
-﻿using KanbanBoardApi.Models;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
-namespace KanbanBoardApi.Models
+namespace KanbanBoardApi.Dal
 {
     public class Card
     {
         public int ID { get; set; }
         [Required]
-        public int BoardID { get; set; }
+        public int LaneID { get; set; }
         [Required]
         public string Title { get; set; }
         public string Description { get; set; }
@@ -26,6 +20,16 @@ namespace KanbanBoardApi.Models
         public DateTime? Deadline { get; set; }
         
         [JsonIgnore]
-        public Board Board { get; set; }
+        public Lane Lane { get; set; }
+
+        public Card() { }
+        public Card(int id, string title, int laneID, DateTime? deadline, string description = null)
+        {
+            ID = id;
+            Title = title;
+            LaneID = laneID;
+            Deadline = deadline;
+            Description = Description == null ? "" : description;
+        }
     }
 }

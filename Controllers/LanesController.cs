@@ -6,60 +6,60 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using KanbanBoardApi.Data;
-using KanbanBoardApi.Models;
+using KanbanBoardApi.Dal;
 using Microsoft.AspNetCore.Cors;
 
 namespace KanbanBoardApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BoardsController : ControllerBase
+    public class LanesController : ControllerBase
     {
         private readonly KanbanBoardContext _context;
 
-        public BoardsController(KanbanBoardContext context)
+        public LanesController(KanbanBoardContext context)
         {
             _context = context;
         }
 
-        // GET: api/Boards
+        // GET: api/Lanes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Board>>> GetBoards()
+        public async Task<ActionResult<IEnumerable<Lane>>> GetLanes()
         {
-            return await _context.Boards
+            return await _context.Lanes
                 .Include(b => b.Cards)
                 .AsNoTracking()
                 .ToListAsync();
         }
 
-        // GET: api/Boards/5
+        // GET: api/Lanes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Board>> GetBoard(int id)
+        public async Task<ActionResult<Lane>> GetLane(int id)
         {
-            var board = await _context.Boards
+            var lane = await _context.Lanes
                 .Include(b => b.Cards)
                 .AsNoTracking()
                 .FirstAsync(b => b.ID == id);
 
-            if (board == null)
+            if (lane == null)
             {
                 return NotFound();
             }
 
-            return board;
+            return lane;
         }
 
-        // PUT: api/Boards/5
+        // PUT: api/Lanes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBoard(int id, Board board)
+        public async Task<IActionResult> PutLane(int id, Lane lane)
         {
-            if (id != board.ID)
+            if (id != lane.ID)
             {
                 return BadRequest();
             }            
 
-            _context.Entry(board).State = EntityState.Modified;
+            _context.Entry(lane).State = EntityState.Modified;
 
             try
             {
@@ -67,7 +67,7 @@ namespace KanbanBoardApi.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!BoardExists(id))
+                if (!LaneExists(id))
                 {
                     return NotFound();
                 }
@@ -80,36 +80,36 @@ namespace KanbanBoardApi.Controllers
             return NoContent();
         }
 
-        // POST: api/Boards
+        // POST: api/Lanes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Board>> PostBoard(Board board)
+        public async Task<ActionResult<Lane>> PostLane(Lane lane)
         {
-            _context.Boards.Add(board);
+            _context.Lanes.Add(lane);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetBoard), new { id = board.ID }, board);
+            return CreatedAtAction(nameof(GetLane), new { id = lane.ID }, lane);
         }
 
-        // DELETE: api/Boards/5
+        // DELETE: api/Lanes/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBoard(int id)
+        public async Task<IActionResult> DeleteLane(int id)
         {
-            var board = await _context.Boards.FindAsync(id);
-            if (board == null)
+            var lane = await _context.Lanes.FindAsync(id);
+            if (lane == null)
             {
                 return NotFound();
             }
 
-            _context.Boards.Remove(board);
+            _context.Lanes.Remove(lane);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool BoardExists(int id)
+        private bool LaneExists(int id)
         {
-            return _context.Boards.Any(e => e.ID == id);
+            return _context.Lanes.Any(e => e.ID == id);
         }
     }
 }

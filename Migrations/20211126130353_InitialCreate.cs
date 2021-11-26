@@ -8,25 +8,26 @@ namespace KanbanBoardApi.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Board",
+                name: "Lane",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Order = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Board", x => x.ID);
+                    table.PrimaryKey("PK_Lane", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Card",
+                name: "CardDto",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    BoardID = table.Column<int>(type: "int", nullable: false),
+                    LaneID = table.Column<int>(type: "int", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true, defaultValue: ""),
                     Order = table.Column<int>(type: "int", nullable: false),
@@ -36,26 +37,26 @@ namespace KanbanBoardApi.Migrations
                 {
                     table.PrimaryKey("PK_Card", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_Card_Board_BoardID",
-                        column: x => x.BoardID,
-                        principalTable: "Board",
+                        name: "FK_Card_Lane_LaneID",
+                        column: x => x.LaneID,
+                        principalTable: "Lane",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Card_BoardID",
-                table: "Card",
-                column: "BoardID");
+                name: "IX_Card_LaneID",
+                table: "CardDto",
+                column: "LaneID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Card");
+                name: "CardDto");
 
             migrationBuilder.DropTable(
-                name: "Board");
+                name: "Lane");
         }
     }
 }

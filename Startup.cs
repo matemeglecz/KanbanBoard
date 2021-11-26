@@ -1,5 +1,5 @@
 using KanbanBoardApi.Data;
-using KanbanBoardApi.Models;
+using KanbanBoardApi.Dal;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -28,12 +28,21 @@ namespace KanbanBoardApi
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {            
+        {
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Kanbanboard API", Version = "v1" });
+                //c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+            });
+
 
             services.AddControllers();
 
             services.AddDbContext<KanbanBoardContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("KanbanBoardContext")));
+
+            services.AddTransient<ICardRepository, CardRepository>();
+            services.AddTransient<ILaneRepository, LaneRepository>();
 
             services.AddCors(opt =>
             {
@@ -44,6 +53,7 @@ namespace KanbanBoardApi
                         .AllowAnyMethod();
                 });
             });
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,8 +63,8 @@ namespace KanbanBoardApi
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                //app.UseSwagger();
-                //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "KanbanBoardApi v1"));
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "KanbanBoardApi v1"));
             }
 
             app.UseHttpsRedirection();
@@ -68,6 +78,7 @@ namespace KanbanBoardApi
                 );*/           
 
             app.UseRouting();
+            
 
             app.UseCors("policy");
 

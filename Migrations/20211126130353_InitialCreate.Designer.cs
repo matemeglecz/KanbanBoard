@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KanbanBoardApi.Migrations
 {
     [DbContext(typeof(KanbanBoardContext))]
-    [Migration("20211102211139_InitialCreate")]
+    [Migration("20211126130353_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,39 +21,24 @@ namespace KanbanBoardApi.Migrations
                 .HasAnnotation("ProductVersion", "5.0.11")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("KanbanBoardApi.Models.Board", b =>
+            modelBuilder.Entity("KanbanBoardApi.Dlo.CardDto", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Title")
+                    b.Property<DateTime?>("Deadline")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("Board");
-                });
-
-            modelBuilder.Entity("KanbanBoardApi.Models.Card", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("BoardID")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Deadline")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(max)")
                         .HasDefaultValue("");
+
+                    b.Property<int>("LaneID")
+                        .HasColumnType("int");
 
                     b.Property<int>("Order")
                         .HasColumnType("int");
@@ -64,23 +49,42 @@ namespace KanbanBoardApi.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("BoardID");
+                    b.HasIndex("LaneID");
 
-                    b.ToTable("Card");
+                    b.ToTable("CardDto");
                 });
 
-            modelBuilder.Entity("KanbanBoardApi.Models.Card", b =>
+            modelBuilder.Entity("KanbanBoardApi.Dlo.Lane", b =>
                 {
-                    b.HasOne("KanbanBoardApi.Models.Board", "Board")
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Lane");
+                });
+
+            modelBuilder.Entity("KanbanBoardApi.Dlo.CardDto", b =>
+                {
+                    b.HasOne("KanbanBoardApi.Dlo.Lane", "Lane")
                         .WithMany("Cards")
-                        .HasForeignKey("BoardID")
+                        .HasForeignKey("LaneID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Board");
+                    b.Navigation("Lane");
                 });
 
-            modelBuilder.Entity("KanbanBoardApi.Models.Board", b =>
+            modelBuilder.Entity("KanbanBoardApi.Dlo.Lane", b =>
                 {
                     b.Navigation("Cards");
                 });

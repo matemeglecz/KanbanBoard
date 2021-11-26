@@ -1,15 +1,15 @@
-﻿using KanbanBoardApi.Models;
+﻿using KanbanBoardApi.Dal;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace KanbanBoardApi.Models
+namespace KanbanBoardApi.Dal
 {
-    public class Board
+    public class Lane
     {
-        public Board()
+        public Lane()
         {  
         }
         
@@ -18,6 +18,8 @@ namespace KanbanBoardApi.Models
         [Required]
         public string Title { get; set; }
 
+        [Required]
+        public int Order { get; set; }
         public ICollection<Card> Cards { get; set; }
 
     }
