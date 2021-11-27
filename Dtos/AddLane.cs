@@ -1,9 +1,9 @@
 ﻿namespace KanbanBoardApi.Dtos
 {
-    public class AddLaneDto
+    public class AddLane
     {
         
-        public AddLaneDto(int iD, string title, int order)
+        public AddLane(int iD, string title, int order)
         {
             ID = iD;
             Title = title;

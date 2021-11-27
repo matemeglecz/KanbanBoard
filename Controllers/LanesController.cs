@@ -10,21 +10,17 @@ namespace KanbanBoardApi.Controllers
     [ApiController]
     public class LanesController : ControllerBase
     {
-        //private readonly KanbanBoardContext _context;
         private readonly ILaneRepository laneRepository;
 
-        public LanesController(ILaneRepository laneRepository)
-        {
-            this.laneRepository = laneRepository;
-        }
+        public LanesController(ILaneRepository laneRepository) => this.laneRepository = laneRepository;
 
         // GET: api/Lanes
         [HttpGet]
-        public async Task<IEnumerable<GetLaneDto>> GetLanes() => await laneRepository.ListLanes();
+        public async Task<IEnumerable<GetLane>> GetLanes() => await laneRepository.ListLanes();
 
         // GET: api/Lanes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<GetLaneDto>> GetLane(int id)
+        public async Task<ActionResult<GetLane>> GetLane(int id)
         {
             var lane = await laneRepository.GetLaneOrNull(id);
 
@@ -70,7 +66,7 @@ namespace KanbanBoardApi.Controllers
         // POST: api/Lanes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<GetLaneDto>> PostLane(AddLaneDto laneDto)
+        public async Task<ActionResult<GetLane>> PostLane(AddLane laneDto)
         {
             var lane = await laneRepository.AddLane(laneDto);
             return CreatedAtAction(nameof(GetLane), new { id = lane.ID }, lane);
@@ -78,10 +74,7 @@ namespace KanbanBoardApi.Controllers
 
         // DELETE: api/Lanes/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteLane(int id)
-        {         
-            return await laneRepository.DeleteLane(id) ? NoContent() : NotFound();
-        }
-      
+        public async Task<IActionResult> DeleteLane(int id) => await laneRepository.DeleteLane(id) ? NoContent() : NotFound();
+
     }
 }

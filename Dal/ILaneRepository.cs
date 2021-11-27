@@ -6,11 +6,11 @@ namespace KanbanBoardApi.Dal
 {
     public interface ILaneRepository
     {
-        public Task<IReadOnlyCollection<GetLaneDto>> ListLanes();
+        public Task<IReadOnlyCollection<GetLane>> ListLanes();
 
-        public Task<GetLaneDto> GetLaneOrNull(int id);
+        public Task<GetLane> GetLaneOrNull(int id);
 
-        public Task<GetLaneDto> AddLane(AddLaneDto laneDto);
+        public Task<GetLane> AddLane(AddLane laneDto);
 
         public Task<bool> DeleteLane(int id);
 

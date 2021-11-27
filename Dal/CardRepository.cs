@@ -19,7 +19,7 @@ namespace KanbanBoardApi.Dal
             this.laneRepository = laneRepository;
         }
 
-        public async Task<IReadOnlyCollection<CardDto>> ListCards()
+        public async Task<IReadOnlyCollection<GetCard>> ListCards()
         {
             return await db.Cards
                 .Select(dbRecord => dbRecord.GetCardDto())
@@ -27,13 +27,13 @@ namespace KanbanBoardApi.Dal
                 .ToArrayAsync();
         }
 
-        public async Task<CardDto> GetCardOrNull(int id)
+        public async Task<GetCard> GetCardOrNull(int id)
         {
             var card = await db.Cards.FirstOrDefaultAsync(c => c.ID == id);
             return card?.GetCardDto();
         }
 
-        public async Task<CardDto> AddCard(CardDto cardDto)
+        public async Task<GetCard> AddCard(GetCard cardDto)
         {
             Card newCard = cardDto.GetCard();
 
@@ -70,52 +70,57 @@ namespace KanbanBoardApi.Dal
             
         }
 
-        public async Task<bool> UpdateCard(CardDto newCardDto)
+        public async Task<bool> EditCard(EditCard newCardDto)
+        {
+            if (!CardExists(newCardDto.Id))
+            {
+                return false;
+            }
+
+            var card = await db.Cards.FindAsync(newCardDto.Id);
+            db.Entry(card).State = EntityState.Modified;            
+
+            if(newCardDto.Title != null)
+                card.Title = newCardDto.Title;
+            if (newCardDto.Description!= null)
+                card.Description = newCardDto?.Description;
+            if (newCardDto.Deadline != null)
+                card.Deadline = newCardDto?.Deadline;
+
+            return await ModifiedSaveChanges(newCardDto.Id);
+        }
+
+        public async Task<bool> MoveCard(MoveCard newCardDto)
         {
             if (!CardExists(newCardDto.Id) || !laneRepository.LaneExists(newCardDto.LaneID))
             {
                 return false;
             }
 
-            var oldCard = await db.Cards.FindAsync(newCardDto.Id);
-            db.Entry(oldCard).State = EntityState.Detached;
+            var card = await db.Cards.FindAsync(newCardDto.Id);
+            db.Entry(card).State = EntityState.Modified;
 
-            if (oldCard.LaneID != newCardDto.LaneID)
+            if (card.LaneID != newCardDto.LaneID)
             {
                 // régi oszlopban aki mögötte volt fel, új oszlopban aki mögötte van le                
-                var cardsOld = await db.Cards.Where(c => c.LaneID == oldCard.LaneID).Where(c => c.ID != oldCard.ID).ToListAsync();
-                MoveUpCards(cardsOld, oldCard.Order);                
-                var cardsNew = await db.Cards.Where(c => c.LaneID == newCardDto.LaneID).Where(c => c.ID != oldCard.ID).ToListAsync();
+                var cardsOld = await db.Cards.Where(c => c.LaneID == card.LaneID).Where(c => c.ID != card.ID).ToListAsync();
+                MoveUpCards(cardsOld, card.Order);
+                var cardsNew = await db.Cards.Where(c => c.LaneID == newCardDto.LaneID).Where(c => c.ID != card.ID).ToListAsync();
                 MoveDownCards(cardsNew, newCardDto.Order);
 
             }
-            else if (oldCard.Order != newCardDto.Order)
+            else if (card.Order != newCardDto.Order)
             {
                 // eredeti hely mögött van fel, új hely mögött van le                
-                var cards = await db.Cards.Where(c => c.LaneID == oldCard.LaneID).Where(c => c.ID != oldCard.ID).ToListAsync();
-                MoveUpCards(cards, oldCard.Order);
-                MoveDownCards(cards, newCardDto.Order);                
+                var cards = await db.Cards.Where(c => c.LaneID == card.LaneID).Where(c => c.ID != card.ID).ToListAsync();
+                MoveUpCards(cards, card.Order);
+                MoveDownCards(cards, newCardDto.Order);
             }
 
-            db.Entry(newCardDto.GetCard()).State = EntityState.Modified;
+            card.LaneID = newCardDto.LaneID;
+            card.Order = newCardDto.Order;
 
-            try
-            {
-                await db.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CardExists(newCardDto.Id))
-                {
-                    return false;
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return true;
+            return await ModifiedSaveChanges(newCardDto.Id);
         }
 
         public bool CardExists(int id)
@@ -141,14 +146,35 @@ namespace KanbanBoardApi.Dal
             });
         }
 
+        private async Task<bool> ModifiedSaveChanges(int id)
+        {
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!CardExists(id))
+                {
+                    return false;
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return true;
+        }
+
     }    
 
     internal static class CardRepositoryExtensions
     {
-        public static CardDto GetCardDto(this Card dbRecord) 
-            => new CardDto(dbRecord.ID, dbRecord.Title, dbRecord.LaneID, dbRecord.Description, dbRecord.Order, dbRecord.Deadline);
+        public static GetCard GetCardDto(this Card dbRecord) 
+            => new GetCard(dbRecord.ID, dbRecord.Title, dbRecord.LaneID, dbRecord.Description, dbRecord.Order, dbRecord.Deadline);
 
-        public static Card GetCard(this CardDto dto) 
+        public static Card GetCard(this GetCard dto) 
             =>  new Card(dto.Id, dto.Title, dto.LaneID, dto.Deadline, dto.Description);
 
 

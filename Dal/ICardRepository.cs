@@ -7,12 +7,13 @@ namespace KanbanBoardApi.Dal
 {
     public interface ICardRepository
     {
-        public Task<IReadOnlyCollection<CardDto>> ListCards();
+        public Task<IReadOnlyCollection<GetCard>> ListCards();
 
-        public Task<CardDto> GetCardOrNull(int id);
-        public Task<CardDto> AddCard(CardDto cardDto);
+        public Task<GetCard> GetCardOrNull(int id);
+        public Task<GetCard> AddCard(GetCard cardDto);
         public Task<bool> DeleteCard(int id);
-        public Task<bool> UpdateCard(CardDto newCardDto);
+        public Task<bool> EditCard(EditCard newCardDto);
+        public Task<bool> MoveCard(MoveCard newCardDto);
         public bool CardExists(int id);
 
     }

@@ -27,11 +27,11 @@ namespace KanbanBoardApi.Controllers
 
         // GET: api/Cards
         [HttpGet]
-        public async Task<IEnumerable<CardDto>> GetCards() => await cardRepository.ListCards();
+        public async Task<IEnumerable<GetCard>> GetCards() => await cardRepository.ListCards();
 
         // GET: api/Cards/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<CardDto>> GetCard(int id)
+        public async Task<ActionResult<GetCard>> GetCard(int id)
         {
             var card = await cardRepository.GetCardOrNull(id);
  
@@ -43,10 +43,10 @@ namespace KanbanBoardApi.Controllers
             return Ok(card);
         }
 
-        // PUT: api/Cards/5
+        // PUT: api/Cards/5/edit
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCard(int id, CardDto newCardDto)
+        [HttpPut("{id}/edit")]
+        public async Task<IActionResult> EditCard(int id, EditCard newCardDto)
         {
             // ha az order és vagy a lane nem egyezik meg akkor mozgatni kell, egyébként csak frissíteni
             if (id != newCardDto.Id)
@@ -54,13 +54,26 @@ namespace KanbanBoardApi.Controllers
                 return BadRequest();
             }                                                               
 
-            return await cardRepository.UpdateCard(newCardDto) ? NoContent() : NotFound();
+            return await cardRepository.EditCard(newCardDto) ? NoContent() : NotFound();
+        }
+
+        // PUT: api/Cards/5/move
+        [HttpPut("{id}/move")]
+        public async Task<IActionResult> MoveCard(int id, MoveCard newCardDto)
+        {
+            // ha az order és vagy a lane nem egyezik meg akkor mozgatni kell, egyébként csak frissíteni
+            if (id != newCardDto.Id)
+            {
+                return BadRequest();
+            }
+
+            return await cardRepository.MoveCard(newCardDto) ? NoContent() : NotFound();
         }
 
         // POST: api/Cards
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<CardDto>> PostCard(CardDto card)
+        public async Task<ActionResult<GetCard>> PostCard(GetCard card)
         {            
             if (!laneRepository.LaneExists(card.LaneID))
             {
@@ -74,10 +87,7 @@ namespace KanbanBoardApi.Controllers
 
         // DELETE: api/Cards/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCard(int id)
-        {
-            return await cardRepository.DeleteCard(id) ? NoContent() : NotFound();
-        }
-        
+        public async Task<IActionResult> DeleteCard(int id) => await cardRepository.DeleteCard(id) ? NoContent() : NotFound();
+
     }
 }

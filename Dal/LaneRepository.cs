@@ -14,7 +14,7 @@ namespace KanbanBoardApi.Dal
         public LaneRepository(KanbanBoardContext db)
             => this.db = db;
 
-        public async Task<IReadOnlyCollection<GetLaneDto>> ListLanes()
+        public async Task<IReadOnlyCollection<GetLane>> ListLanes()
         {
             return await db.Lanes
                 .Include(l => l.Cards)
@@ -23,7 +23,7 @@ namespace KanbanBoardApi.Dal
                 .ToArrayAsync();
         }
 
-        public async Task<GetLaneDto> GetLaneOrNull(int id)
+        public async Task<GetLane> GetLaneOrNull(int id)
         {
             var lane = await db.Lanes
                 .Include(l => l.Cards)
@@ -32,7 +32,7 @@ namespace KanbanBoardApi.Dal
             return lane?.GetLaneDto();
         }
 
-        public async Task<GetLaneDto> AddLane(AddLaneDto laneDto)
+        public async Task<GetLane> AddLane(AddLane laneDto)
         {
             Lane newLane = laneDto.GetLane();
 
@@ -64,7 +64,10 @@ namespace KanbanBoardApi.Dal
             var deletedLane = await db.Lanes.FirstOrDefaultAsync(l => l.ID == id);
             if (deletedLane == null)
                 return false;
-            
+
+            var laneOrderChangedList = await db.Lanes.Where(l => l.Order >= deletedLane.Order).ToListAsync();
+            laneOrderChangedList.ForEach(l => l.Order -= 1);            
+
             db.Lanes.Remove(deletedLane);
             await db.SaveChangesAsync();
 
@@ -79,18 +82,18 @@ namespace KanbanBoardApi.Dal
     }
     internal static class LaneRepositoryExtensions
     {
-        public static GetLaneDto GetLaneDto(this Lane dbRecord)
+        public static GetLane GetLaneDto(this Lane dbRecord)
         {
             var cardDtos = dbRecord.Cards?
                             .Select(c =>
-                                new CardDto(c.ID, c.Title, c.LaneID,
+                                new GetCard(c.ID, c.Title, c.LaneID,
                                     c.Description, c.Order, c.Deadline)
                                 )
                             .ToList();
-            return new GetLaneDto(dbRecord.ID, dbRecord.Title, dbRecord.Order, cardDtos ?? new List<CardDto>());
+            return new GetLane(dbRecord.ID, dbRecord.Title, dbRecord.Order, cardDtos ?? new List<GetCard>());
         }
 
-        public static Lane GetLane(this AddLaneDto lane)
+        public static Lane GetLane(this AddLane lane)
         {
             return new Lane(lane.Title);
         }

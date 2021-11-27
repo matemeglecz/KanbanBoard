@@ -2,9 +2,9 @@
 
 namespace KanbanBoardApi.Dtos
 {
-    public class GetLaneDto
+    public class GetLane
     {
-        public GetLaneDto(int iD, string title, int order, ICollection<CardDto> cards)
+        public GetLane(int iD, string title, int order, ICollection<GetCard> cards)
         {
             ID = iD;
             Title = title;
@@ -18,6 +18,6 @@ namespace KanbanBoardApi.Dtos
 
         public int Order { get; set; }
 
-        public ICollection<CardDto> Cards { get; private set; }
+        public ICollection<GetCard> Cards { get; private set; }
     }
 }

@@ -2,9 +2,9 @@
 
 namespace KanbanBoardApi.Dtos
 {
-    public class CardDto
+    public class GetCard
     {
-        public CardDto(int id, string title, int laneID, string description, 
+        public GetCard(int id, string title, int laneID, string description, 
             int order, DateTime? deadline = null)
         {
             Id = id;
