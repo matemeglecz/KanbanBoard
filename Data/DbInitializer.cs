@@ -6,10 +6,14 @@ using System.Threading.Tasks;
 
 namespace KanbanBoardApi.Data
 {
-    public class DbInitializer
+    public static class DbInitializer
     {
         public static void Initialize(KanbanBoardContext context)
         {
+            if (context is null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
             // Look for any students.
             if (context.Lanes.Any())
             {

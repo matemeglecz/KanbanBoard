@@ -25,7 +25,7 @@ namespace KanbanBoardApi.Data
 
         [Required]
         public int Order { get; set; }
-        public ICollection<Card> Cards { get; set; }
+        public ICollection<Card> Cards { get; }
 
     }
 }

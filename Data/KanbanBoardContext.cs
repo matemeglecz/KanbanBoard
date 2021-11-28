@@ -19,6 +19,11 @@ namespace KanbanBoardApi.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            if (modelBuilder is null)
+            {
+                throw new ArgumentNullException(nameof(modelBuilder));
+            }
+
             modelBuilder.Entity<Lane>().ToTable("Lane")
                 .HasMany(b => b.Cards)
                 .WithOne(c => c.Lane);

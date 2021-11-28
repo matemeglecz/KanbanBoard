@@ -24,17 +24,23 @@ namespace KanbanBoardApi.Dal
             return await db.Cards
                 .Select(dbRecord => dbRecord.GetCardDto())
                 .AsNoTracking()
-                .ToArrayAsync();
+                .ToArrayAsync()
+                .ConfigureAwait(false);
         }
 
         public async Task<GetCard> GetCardOrNull(int id)
         {
-            var card = await db.Cards.FirstOrDefaultAsync(c => c.ID == id);
+            var card = await db.Cards.FirstOrDefaultAsync(c => c.ID == id).ConfigureAwait(false);
             return card?.GetCardDto();
         }
 
         public async Task<GetCard> AddCard(GetCard cardDto)
         {
+            if (cardDto is null)
+            {
+                throw new System.ArgumentNullException(nameof(cardDto));
+            }
+
             Card newCard = cardDto.GetCard();
 
             try
@@ -47,72 +53,82 @@ namespace KanbanBoardApi.Dal
                 newCard.Order = 0;
             }
 
-            await db.Cards.AddAsync(newCard);
-            await db.SaveChangesAsync();
+            await db.Cards.AddAsync(newCard).ConfigureAwait(false);
+            await db.SaveChangesAsync().ConfigureAwait(false);
 
             return newCard.GetCardDto();
         }
 
         public async Task<bool> DeleteCard(int id)
         {            
-            var deletedCard = await db.Cards.FindAsync(id);
+            var deletedCard = await db.Cards.FindAsync(id).ConfigureAwait(false);
             if (deletedCard == null) 
                 return false;
 
-            var cards = await db.Cards.Where(c => c.LaneID == deletedCard.LaneID).Where(c => c.ID != deletedCard.ID).ToListAsync();
+            var cards = await db.Cards.Where(c => c.LaneID == deletedCard.LaneID).Where(c => c.ID != deletedCard.ID).ToListAsync().ConfigureAwait(false);
             MoveUpCards(cards, deletedCard.Order);
 
             db.Cards.Remove(deletedCard);
 
                 
-            await db.SaveChangesAsync();
+            await db.SaveChangesAsync().ConfigureAwait(false);
             return true;                
             
         }
 
         public async Task<bool> EditCard(EditCard newCardDto)
         {
+            if (newCardDto is null)
+            {
+                throw new System.ArgumentNullException(nameof(newCardDto));
+            }
+
             if (!CardExists(newCardDto.Id))
             {
                 return false;
             }
 
-            var card = await db.Cards.FindAsync(newCardDto.Id);
+            var card = await db.Cards.FindAsync(newCardDto.Id).ConfigureAwait(false);
             db.Entry(card).State = EntityState.Modified;            
 
             if(newCardDto.Title != null)
                 card.Title = newCardDto.Title;
             if (newCardDto.Description!= null)
-                card.Description = newCardDto?.Description;
+                card.Description = newCardDto.Description;
             if (newCardDto.Deadline != null)
-                card.Deadline = newCardDto?.Deadline;
+                card.Deadline = newCardDto.Deadline;
 
-            return await ModifiedSaveChanges(newCardDto.Id);
+            return await ModifiedSaveChanges(newCardDto.Id).ConfigureAwait(false);
         }
 
         public async Task<bool> MoveCard(MoveCard newCardDto)
         {
+            if (newCardDto is null)
+            {
+                throw new System.ArgumentNullException(nameof(newCardDto));
+            }
+
             if (!CardExists(newCardDto.Id) || !laneRepository.LaneExists(newCardDto.LaneID))
             {
                 return false;
             }
 
-            var card = await db.Cards.FindAsync(newCardDto.Id);
+            var card = await db.Cards.FindAsync(newCardDto.Id).ConfigureAwait(false);
             db.Entry(card).State = EntityState.Modified;
 
             if (card.LaneID != newCardDto.LaneID)
             {
                 // régi oszlopban aki mögötte volt fel, új oszlopban aki mögötte van le                
-                var cardsOld = await db.Cards.Where(c => c.LaneID == card.LaneID).Where(c => c.ID != card.ID).ToListAsync();
+                var cardsOld = await db.Cards.Where(c => c.LaneID == card.LaneID).Where(c => c.ID != card.ID).ToListAsync().ConfigureAwait(false);
                 MoveUpCards(cardsOld, card.Order);
-                var cardsNew = await db.Cards.Where(c => c.LaneID == newCardDto.LaneID).Where(c => c.ID != card.ID).ToListAsync();
+                var cardsNew = await db.Cards.Where(c => c.LaneID == newCardDto.LaneID).Where(c => c.ID != card.ID).ToListAsync().ConfigureAwait(false);
                 MoveDownCards(cardsNew, newCardDto.Order);
 
             }
             else if (card.Order != newCardDto.Order)
             {
                 // eredeti hely mögött van fel, új hely mögött van le                
-                var cards = await db.Cards.Where(c => c.LaneID == card.LaneID).Where(c => c.ID != card.ID).ToListAsync();
+                var cards = await db.Cards.Where(c => c.LaneID == card.LaneID).Where(c => c.ID != card.ID).ToListAsync().ConfigureAwait(false);
                 MoveUpCards(cards, card.Order);
                 MoveDownCards(cards, newCardDto.Order);
             }
@@ -120,7 +136,7 @@ namespace KanbanBoardApi.Dal
             card.LaneID = newCardDto.LaneID;
             card.Order = newCardDto.Order;
 
-            return await ModifiedSaveChanges(newCardDto.Id);
+            return await ModifiedSaveChanges(newCardDto.Id).ConfigureAwait(false);
         }
 
         public bool CardExists(int id)
@@ -128,7 +144,7 @@ namespace KanbanBoardApi.Dal
             return db.Cards.Any(e => e.ID == id);
         }
 
-        private void MoveUpCards(List<Card> cards, int limit)
+        private static void MoveUpCards(List<Card> cards, int limit)
         {
             cards.ForEach(c =>
             {
@@ -137,7 +153,7 @@ namespace KanbanBoardApi.Dal
             });
         }
 
-        private void MoveDownCards(List<Card> cards, int limit)
+        private static void MoveDownCards(List<Card> cards, int limit)
         {
             cards.ForEach(c =>
             {
@@ -150,7 +166,7 @@ namespace KanbanBoardApi.Dal
         {
             try
             {
-                await db.SaveChangesAsync();
+                await db.SaveChangesAsync().ConfigureAwait(false);
             }
             catch (DbUpdateConcurrencyException)
             {

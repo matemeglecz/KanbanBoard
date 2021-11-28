@@ -16,13 +16,13 @@ namespace KanbanBoardApi.Controllers
 
         // GET: api/Lanes
         [HttpGet]
-        public async Task<IEnumerable<GetLane>> GetLanes() => await laneRepository.ListLanes();
+        public async Task<IEnumerable<GetLane>> GetLanes() => await laneRepository.ListLanes().ConfigureAwait(false);
 
         // GET: api/Lanes/5
         [HttpGet("{id}")]
         public async Task<ActionResult<GetLane>> GetLane(int id)
         {
-            var lane = await laneRepository.GetLaneOrNull(id);
+            var lane = await laneRepository.GetLaneOrNull(id).ConfigureAwait(false);
 
             if (lane == null)
             {
@@ -68,13 +68,13 @@ namespace KanbanBoardApi.Controllers
         [HttpPost]
         public async Task<ActionResult<GetLane>> PostLane(AddLane laneDto)
         {
-            var lane = await laneRepository.AddLane(laneDto);
+            var lane = await laneRepository.AddLane(laneDto).ConfigureAwait(false);
             return CreatedAtAction(nameof(GetLane), new { id = lane.ID }, lane);
         }
 
         // DELETE: api/Lanes/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteLane(int id) => await laneRepository.DeleteLane(id) ? NoContent() : NotFound();
+        public async Task<IActionResult> DeleteLane(int id) => await laneRepository.DeleteLane(id).ConfigureAwait(false) ? NoContent() : NotFound();
 
     }
 }

@@ -20,7 +20,7 @@ namespace KanbanBoardApi.Dal
                 .Include(l => l.Cards)
                 .Select(dbRecord => dbRecord.GetLaneDto())
                 .AsNoTracking()
-                .ToArrayAsync();
+                .ToArrayAsync().ConfigureAwait(false);
         }
 
         public async Task<GetLane> GetLaneOrNull(int id)
@@ -28,12 +28,17 @@ namespace KanbanBoardApi.Dal
             var lane = await db.Lanes
                 .Include(l => l.Cards)
                 .AsNoTracking()
-                .FirstOrDefaultAsync(l => l.ID==id);
+                .FirstOrDefaultAsync(l => l.ID==id).ConfigureAwait(false);
             return lane?.GetLaneDto();
         }
 
         public async Task<GetLane> AddLane(AddLane laneDto)
         {
+            if (laneDto is null)
+            {
+                throw new System.ArgumentNullException(nameof(laneDto));
+            }
+
             Lane newLane = laneDto.GetLane();
 
             try
@@ -43,7 +48,7 @@ namespace KanbanBoardApi.Dal
                     newLane.Order = maxOrder + 1;
                 else
                 {
-                    var laneOrderChangedList = await db.Lanes.Where(l => l.Order >= laneDto.Order).ToListAsync();
+                    var laneOrderChangedList = await db.Lanes.Where(l => l.Order >= laneDto.Order).ToListAsync().ConfigureAwait(false);
                     laneOrderChangedList.ForEach(l => l.Order += 1);
                     newLane.Order = laneDto.Order;
                 }
@@ -53,23 +58,23 @@ namespace KanbanBoardApi.Dal
                 newLane.Order = 0;
             }
 
-            await db.Lanes.AddAsync(newLane);
-            await db.SaveChangesAsync();
+            await db.Lanes.AddAsync(newLane).ConfigureAwait(false);
+            await db.SaveChangesAsync().ConfigureAwait(false);
 
             return newLane.GetLaneDto();
         }
 
         public async Task<bool> DeleteLane(int id)
         {
-            var deletedLane = await db.Lanes.FirstOrDefaultAsync(l => l.ID == id);
+            var deletedLane = await db.Lanes.FirstOrDefaultAsync(l => l.ID == id).ConfigureAwait(false);
             if (deletedLane == null)
                 return false;
 
-            var laneOrderChangedList = await db.Lanes.Where(l => l.Order >= deletedLane.Order).ToListAsync();
+            var laneOrderChangedList = await db.Lanes.Where(l => l.Order >= deletedLane.Order).ToListAsync().ConfigureAwait(false);
             laneOrderChangedList.ForEach(l => l.Order -= 1);            
 
             db.Lanes.Remove(deletedLane);
-            await db.SaveChangesAsync();
+            await db.SaveChangesAsync().ConfigureAwait(false);
 
             return true;
         }
