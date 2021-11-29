@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using KanbanBoardApi.Data;
 using KanbanBoardApi.Dal;
 using KanbanBoardApi.Dtos;
-using System.Diagnostics.Contracts;
 
 namespace KanbanBoardApi.Controllers
 {
@@ -27,13 +22,13 @@ namespace KanbanBoardApi.Controllers
 
         // GET: api/Cards
         [HttpGet]
-        public async Task<IEnumerable<GetCard>> GetCards() => await cardRepository.ListCards().ConfigureAwait(false);
+        public async Task<IEnumerable<GetCard>> GetCards() => await cardRepository.ListCards().ConfigureAwait(true);
 
         // GET: api/Cards/5
         [HttpGet("{id}")]
         public async Task<ActionResult<GetCard>> GetCard(int id)
         {
-            var card = await cardRepository.GetCardOrNull(id).ConfigureAwait(false);
+            var card = await cardRepository.GetCardOrNull(id).ConfigureAwait(true);
  
             if (card == null)
             {
@@ -48,36 +43,36 @@ namespace KanbanBoardApi.Controllers
         [HttpPut("{id}/edit")]
         public async Task<IActionResult> EditCard(int id, EditCard newCardDto)
         {
+            if (newCardDto is null)
+            {
+                throw new ArgumentNullException(nameof(newCardDto));
+            }
+
             // ha az order és vagy a lane nem egyezik meg akkor mozgatni kell, egyébként csak frissíteni
             if (id != newCardDto.Id)
             {
                 return BadRequest();
             }
 
-            if (newCardDto is null)
-            {
-                throw new ArgumentNullException(nameof(newCardDto));
-            }
-
-            return await cardRepository.EditCard(newCardDto).ConfigureAwait(false) ? NoContent() : NotFound();
+            return await cardRepository.EditCard(newCardDto).ConfigureAwait(true) ? NoContent() : NotFound();
         }
 
         // PUT: api/Cards/5/move
         [HttpPut("{id}/move")]
         public async Task<IActionResult> MoveCard(int id, MoveCard moveCard)
         {
-            // ha az order és vagy a lane nem egyezik meg akkor mozgatni kell, egyébként csak frissíteni
-            if (id != moveCard.Id)
-            {
-                return BadRequest();
-            }
-
             if (moveCard is null)
             {
                 throw new ArgumentNullException(nameof(moveCard));
             }
 
-            return await cardRepository.MoveCard(moveCard).ConfigureAwait(false) ? NoContent() : NotFound();
+            // ha az order és vagy a lane nem egyezik meg akkor mozgatni kell, egyébként csak frissíteni
+            if (id != moveCard.Id)
+            {
+                return BadRequest();
+            }         
+
+            return await cardRepository.MoveCard(moveCard).ConfigureAwait(true) ? NoContent() : NotFound();
         }
 
         // POST: api/Cards
@@ -95,14 +90,14 @@ namespace KanbanBoardApi.Controllers
                 return NotFound();
             }
 
-            var addedCard = await cardRepository.AddCard(card).ConfigureAwait(false);
+            var addedCard = await cardRepository.AddCard(card).ConfigureAwait(true);
 
             return CreatedAtAction("GetCard", new { id = addedCard.Id }, addedCard);
         }
 
         // DELETE: api/Cards/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCard(int id) => await cardRepository.DeleteCard(id).ConfigureAwait(false) ? NoContent() : NotFound();
+        public async Task<IActionResult> DeleteCard(int id) => await cardRepository.DeleteCard(id).ConfigureAwait(true) ? NoContent() : NotFound();
 
     }
 }

@@ -1,6 +1,7 @@
 ﻿using KanbanBoardApi.Data;
 using KanbanBoardApi.Dtos;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,7 +21,7 @@ namespace KanbanBoardApi.Dal
                 .Include(l => l.Cards)
                 .Select(dbRecord => dbRecord.GetLaneDto())
                 .AsNoTracking()
-                .ToArrayAsync().ConfigureAwait(false);
+                .ToArrayAsync().ConfigureAwait(true);
         }
 
         public async Task<GetLane> GetLaneOrNull(int id)
@@ -28,7 +29,7 @@ namespace KanbanBoardApi.Dal
             var lane = await db.Lanes
                 .Include(l => l.Cards)
                 .AsNoTracking()
-                .FirstOrDefaultAsync(l => l.ID==id).ConfigureAwait(false);
+                .FirstOrDefaultAsync(l => l.ID==id).ConfigureAwait(true);
             return lane?.GetLaneDto();
         }
 
@@ -48,33 +49,34 @@ namespace KanbanBoardApi.Dal
                     newLane.Order = maxOrder + 1;
                 else
                 {
-                    var laneOrderChangedList = await db.Lanes.Where(l => l.Order >= laneDto.Order).ToListAsync().ConfigureAwait(false);
+                    var laneOrderChangedList = await db.Lanes.Where(l => l.Order >= laneDto.Order).ToListAsync().ConfigureAwait(true);
                     laneOrderChangedList.ForEach(l => l.Order += 1);
                     newLane.Order = laneDto.Order;
                 }
             }
-            catch
+            catch (ArgumentNullException)
             {
                 newLane.Order = 0;
             }
 
-            await db.Lanes.AddAsync(newLane).ConfigureAwait(false);
-            await db.SaveChangesAsync().ConfigureAwait(false);
+            await db.Lanes.AddAsync(newLane).ConfigureAwait(true);
+            await db.SaveChangesAsync().ConfigureAwait(true);
 
             return newLane.GetLaneDto();
         }
 
         public async Task<bool> DeleteLane(int id)
         {
-            var deletedLane = await db.Lanes.FirstOrDefaultAsync(l => l.ID == id).ConfigureAwait(false);
+            var deletedLane = await db.Lanes.FirstOrDefaultAsync(l => l.ID == id).ConfigureAwait(true);
+
             if (deletedLane == null)
                 return false;
 
-            var laneOrderChangedList = await db.Lanes.Where(l => l.Order >= deletedLane.Order).ToListAsync().ConfigureAwait(false);
+            var laneOrderChangedList = await db.Lanes.Where(l => l.Order >= deletedLane.Order).ToListAsync().ConfigureAwait(true);
             laneOrderChangedList.ForEach(l => l.Order -= 1);            
 
             db.Lanes.Remove(deletedLane);
-            await db.SaveChangesAsync().ConfigureAwait(false);
+            await db.SaveChangesAsync().ConfigureAwait(true);
 
             return true;
         }
@@ -102,5 +104,6 @@ namespace KanbanBoardApi.Dal
         {
             return new Lane(lane.Title);
         }
+
     }
 }

@@ -1,17 +1,15 @@
 using KanbanBoardApi.Data;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace KanbanBoardApi
 {
+#pragma warning disable CA1052 // Static holder types should be Static or NotInheritable
     public class Program
+#pragma warning restore CA1052 // Static holder types should be Static or NotInheritable
     {
         public static void Main(string[] args)
         {
@@ -33,10 +31,12 @@ namespace KanbanBoardApi
                     //context.Database.EnsureCreated();
                     DbInitializer.Initialize(context);
                 }
-                catch (Exception ex)
+                catch (InvalidOperationException ex)
                 {
                     var logger = services.GetRequiredService<ILogger<Program>>();
+#pragma warning disable CA1848 // Use the LoggerMessage delegates
                     logger.LogError(ex, "An error occurred creating the DB.");
+#pragma warning restore CA1848 // Use the LoggerMessage delegates
                 }
             }
         }
