@@ -70,7 +70,7 @@ namespace KanbanBoardApi.Controllers
             if (id != moveCard.Id)
             {
                 return BadRequest();
-            }         
+            }
 
             return await cardRepository.MoveCard(moveCard).ConfigureAwait(true) ? NoContent() : NotFound();
         }

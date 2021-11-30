@@ -10,7 +10,7 @@ namespace KanbanBoardApi.Data
         {
         }
 
-        public DbSet<Lane> Lanes { get; set; }
+        public virtual DbSet<Lane> Lanes { get; set; }
         public DbSet<Card> Cards { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
