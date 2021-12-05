@@ -20,8 +20,11 @@ dotnet ef database update
 ```
 A parancs hatására EFCore Migrations segítségevel létrejön az adatbázis séma.
 Ez a projekt tartalmazza a `wwwroot` mappában egy frontendhez tartozó buildet. 
-
-### publish hiányzik
+A futtatáshoz már csak egy parancs hiányzik:
+```
+dotnet run
+```
+A `localhost:5001/index.html`-en elérhatő a kliens alkalmazás, a `localhost:5001/swagger/index.html`-en az api dokumentáció.
 
 
 Amennyiben szeretnénk külön futtatni a frontendet, az alábbi parancsok kiadása szükséges a frontendhez tartozó mappában:
@@ -32,7 +35,7 @@ npm start
 *Ahhoz, hogy az alkalmazás érdemben használható legyen szükséges, hogy a backend fusson.*
 
 ## Backend
-
+Microsoft SQL Server adatbázist használ az alkalmazás.
 Az SQL adatbázis code-first megközelítéssel készült. 
 A létrejött adatbázis ER-diagramja:
 **kép**
@@ -54,6 +57,7 @@ Az alkalmazáshoz tartozik egy [Swashbuckle](https://www.nuget.org/packages/Swas
 A kliens alkalmazás React-el készült. 
 A kártyák Drag and Drop módszerrel mozgathatóak az oszlopok között, ennek segítségéül a [react-beautiful-dnd](https://github.com/atlassian/react-beautiful-dnd) npm package-t használtam. 
 A kinézete [Material UI](https://mui.com/)-al készült.
+
 
 ### Felépítése
 Az alkalmazás komponensei az `src/Components` mappában található. Ennek tartalma:
