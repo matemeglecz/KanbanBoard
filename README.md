@@ -1,5 +1,6 @@
-# Kanbanboar App
+# Kanbanboard App
 
+![image](https://user-images.githubusercontent.com/58141904/144756333-20123a47-0fe8-4567-942d-d509a82f1d79.png)
 ## Specifikáció
 A konkrét feladat egy teendőket kezelő webalkalmazás backendjének és frontendjének elkészítése. A teendőket adatbázisban tároljuk és a webes felületen jelenítjük meg, a kiszolgáló pedig REST interfészen keresztül érhető el.
 A teendők rendelkeznek címmel, leírással, határidővel és állapottal (függőben, folyamatban, kész, elhalasztva). A határidő helyett a prioritást a teendők sorrendje határozza meg, tehát az előbbi adataik mellett még az egymáshoz képesti sorrendet is tároljuk és megjelenítjük.
@@ -24,7 +25,7 @@ A futtatáshoz már csak egy parancs hiányzik:
 ```
 dotnet run
 ```
-A `localhost:5001/index.html`-en elérhatő a kliens alkalmazás, a `localhost:5001/swagger/index.html`-en az api dokumentáció.
+A `localhost:5001`-en vagy a `localhost:5001/index.html`-en elérhatő a kliens alkalmazás, a `localhost:5001/swagger/index.html`-en az api dokumentáció.
 
 
 Amennyiben szeretnénk külön futtatni a frontendet, az alábbi parancsok kiadása szükséges a frontendhez tartozó mappában:
@@ -38,14 +39,14 @@ npm start
 Microsoft SQL Server adatbázist használ az alkalmazás.
 Az SQL adatbázis code-first megközelítéssel készült. 
 A létrejött adatbázis ER-diagramja:
-**kép**
+
+![er-diagram-fekvo](https://user-images.githubusercontent.com/58141904/144756702-75d54c33-7007-4e55-b3f7-afbe7eebbfec.png)
+
 
 A szerver oldal egy ASP.NET core api alkalmazás, ami .NET 5-re van targetelve. Az adatbázis leképzés EntityFramworkCore-al történik.
-A kontrollerek végzik a http kommunikációt a kliensekkel, a Dal-ban a CardRepository és a LaneRepository osztályokban valósul meg.
+A kontrollerek végzik a http kommunikációt a kliensekkel, a business logic a Dal-ban a CardRepository és a LaneRepository osztályokban valósul meg.
 A kliensekkel DTO-kal történik a kommunikáció, így csak a szükséges információk utaznak a hálózaton.
 Az alkalmazás a Dependency Injection tervezési mintát követi, így a controllerek a repositorykat dependency injection-el kapják meg, a repository-k szintén DI-vel érik el a KanbanBoardContext-et, hogy az adatbázison műveleteket tudjanak végezni. Az adatbázis query-k Linq segítségvel vannak megvalósítva.
-
-**talán kép**
 
 ### Unit testek 
 A `Test` alkönyvtárban találhatók a tesztek. A Lane törlése van letesztelve, 4 teszttel (2 a controller válaszát teszteli, 2 a repository-ban való törlésre vonatkozik). A tesztekhez [Moq](https://www.nuget.org/packages/Moq/), [MockQueryable.Moq](https://www.nuget.org/packages/MockQueryable.Moq/) (ez az async query-k tesztelését teszi egyszerűbbé Moq segítségével), [MSTest.TestAdapter](https://www.nuget.org/packages/MSTest.TestAdapter/), [MSTest.TestFrameWork](https://www.nuget.org/packages/MSTest.TestFramework/) nuget package-k szolgáltak segítségül. 
@@ -62,7 +63,7 @@ A kinézete [Material UI](https://mui.com/)-al készült.
 ### Felépítése
 Az alkalmazás komponensei az `src/Components` mappában található. Ennek tartalma:
 - **App**: felülírja az alapértelmezett témáját az alkalmazásnak. Megjeleníti az alkalmazás fejlécét (Toolbar) 
-- **KanbanBoard**: Megjelníti az oszlopokat, az oszlpok mellé megjelenít egy leghosszabb oszlop mértű gombot, amivel új oszlopot lehet megadni, kattintás hatására egy `NewLaneDialog`-ot. Kezelei ha változás történt az alkalmazásban (new card, new lane, ...). Tárolja az oszlopokat és a kártáykat.
+- **KanbanBoard**: Megjeleníti az oszlopokat, az oszlpok mellé megjelenít egy leghosszabb oszlop mértű gombot, amivel új oszlopot lehet hozzáadni a táblához, kattintás hatására egy `NewLaneDialog`-ot nyit. Kezelei ha változás történt az alkalmazásban (new card, new lane, ...). Tárolja az oszlopokat és a kárátykat.
 - **KanbanLane**: Megjelenít egy oszlopot a kártyákkal. Rendelkezik egy *delete* és *add new card* gombbal. Az utóbbi egy `EditNewCardDiaolg`-ot jelenít meg.
 - **TaskCard**: Megjelenít egy kártyát az adataival. Rendelkezik egy *delete* és *edit* gombbal. Az utóbbi egy `EditNewCardDiaolg`-ot jelenít meg.
 - **NewLaneDialog**: Megjelenít egy ablakot ahol meg lehet adni az új oszlop adatait.
