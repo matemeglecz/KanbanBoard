@@ -1,5 +1,6 @@
-# Kanbanboar App
+# Kanbanboard App
 
+![image](https://user-images.githubusercontent.com/58141904/144756333-20123a47-0fe8-4567-942d-d509a82f1d79.png)
 ## Specifikáció
 A konkrét feladat egy teendőket kezelő webalkalmazás backendjének és frontendjének elkészítése. A teendőket adatbázisban tároljuk és a webes felületen jelenítjük meg, a kiszolgáló pedig REST interfészen keresztül érhető el.
 A teendők rendelkeznek címmel, leírással, határidővel és állapottal (függőben, folyamatban, kész, elhalasztva). A határidő helyett a prioritást a teendők sorrendje határozza meg, tehát az előbbi adataik mellett még az egymáshoz képesti sorrendet is tároljuk és megjelenítjük.
@@ -24,7 +25,7 @@ A futtatáshoz már csak egy parancs hiányzik:
 ```
 dotnet run
 ```
-A `localhost:5001/index.html`-en elérhatő a kliens alkalmazás, a `localhost:5001/swagger/index.html`-en az api dokumentáció.
+A `localhost:5001`-en vagy a `localhost:5001/index.html`-en elérhatő a kliens alkalmazás, a `localhost:5001/swagger/index.html`-en az api dokumentáció.
 
 
 Amennyiben szeretnénk külön futtatni a frontendet, az alábbi parancsok kiadása szükséges a frontendhez tartozó mappában:
@@ -44,8 +45,6 @@ A szerver oldal egy ASP.NET core api alkalmazás, ami .NET 5-re van targetelve. 
 A kontrollerek végzik a http kommunikációt a kliensekkel, a Dal-ban a CardRepository és a LaneRepository osztályokban valósul meg.
 A kliensekkel DTO-kal történik a kommunikáció, így csak a szükséges információk utaznak a hálózaton.
 Az alkalmazás a Dependency Injection tervezési mintát követi, így a controllerek a repositorykat dependency injection-el kapják meg, a repository-k szintén DI-vel érik el a KanbanBoardContext-et, hogy az adatbázison műveleteket tudjanak végezni. Az adatbázis query-k Linq segítségvel vannak megvalósítva.
-
-**talán kép**
 
 ### Unit testek 
 A `Test` alkönyvtárban találhatók a tesztek. A Lane törlése van letesztelve, 4 teszttel (2 a controller válaszát teszteli, 2 a repository-ban való törlésre vonatkozik). A tesztekhez [Moq](https://www.nuget.org/packages/Moq/), [MockQueryable.Moq](https://www.nuget.org/packages/MockQueryable.Moq/) (ez az async query-k tesztelését teszi egyszerűbbé Moq segítségével), [MSTest.TestAdapter](https://www.nuget.org/packages/MSTest.TestAdapter/), [MSTest.TestFrameWork](https://www.nuget.org/packages/MSTest.TestFramework/) nuget package-k szolgáltak segítségül. 
