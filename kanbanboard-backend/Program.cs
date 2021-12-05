@@ -28,7 +28,7 @@ namespace KanbanBoardApi
                 try
                 {
                     var context = services.GetRequiredService<KanbanBoardContext>();
-                    //context.Database.EnsureCreated();
+
                     DbInitializer.Initialize(context);
                 }
                 catch (InvalidOperationException ex)

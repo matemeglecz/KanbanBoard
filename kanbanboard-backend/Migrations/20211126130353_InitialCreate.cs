@@ -27,7 +27,7 @@ namespace KanbanBoardApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CardDto",
+                name: "Card",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
@@ -51,7 +51,7 @@ namespace KanbanBoardApi.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_Card_LaneID",
-                table: "CardDto",
+                table: "Card",
                 column: "LaneID");
         }
 
@@ -63,7 +63,7 @@ namespace KanbanBoardApi.Migrations
             }
 
             migrationBuilder.DropTable(
-                name: "CardDto");
+                name: "Card");
 
             migrationBuilder.DropTable(
                 name: "Lane");

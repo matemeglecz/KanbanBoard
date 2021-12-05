@@ -7,6 +7,10 @@
 	<AnalysisMode>AllEnabledByDefault</AnalysisMode>
 	<AnalysisLevel>latest</AnalysisLevel>
 	<GenerateProgramFile>false</GenerateProgramFile>
+	<UserSecretsId>27058d2d-ab36-42dc-8638-5ce0be5feffc</UserSecretsId>
+	<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	<DockerfileContext>.</DockerfileContext>
+	<DockerComposeProjectPath>docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,6 +26,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
     <PackageReference Include="MockQueryable.Moq" Version="5.0.1" />
     <PackageReference Include="Moq" Version="4.16.1" />
@@ -32,6 +37,7 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>

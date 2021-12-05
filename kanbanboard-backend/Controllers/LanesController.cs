@@ -30,38 +30,7 @@ namespace KanbanBoardApi.Controllers
             }
 
             return Ok(lane);
-        }
-
-        // PUT: api/Lanes/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-       /* [HttpPut("{id}")]
-        public async Task<IActionResult> PutLane(int id, AddEditLaneDto lane)
-        {
-            if (id != lane.ID)
-            {
-                return BadRequest();
-            }            
-
-            _context.Entry(lane).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!LaneExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }*/
+        }     
 
         // POST: api/Lanes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

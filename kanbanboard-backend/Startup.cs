@@ -25,7 +25,6 @@ namespace KanbanBoardApi
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Kanbanboard API", Version = "v1" });
-                //c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
             });
 
 
@@ -58,20 +57,13 @@ namespace KanbanBoardApi
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "KanbanBoardApi v1"));
-            }
+            }            
 
             app.UseHttpsRedirection();
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
 
-            /*app.UseCors(builder =>
-                builder
-                    .WithOrigins("http://localhost:3000")
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials()
-                );*/           
-
-            app.UseRouting();
-            
+            app.UseRouting();            
 
             app.UseCors("policy");
 

@@ -22,8 +22,7 @@ export default class HttpCommunication {
                 headers: {
                     'Access-Control-Allow-Origin': this.host,
                 },
-            }).catch((error) => {
-                console.log('request failed', error);
+            }).catch(() => {
                 this.errorHandler();
             });
             tries += 1;
@@ -45,8 +44,7 @@ export default class HttpCommunication {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(data),
-        }).catch((error) => {
-            console.log('request failed', error);
+        }).catch(() => {
             this.errorHandler();
         });
 
@@ -64,8 +62,7 @@ export default class HttpCommunication {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(data),
-        }).catch((error) => {
-            console.log('request failed', error);
+        }).catch(() => {
             this.errorHandler();
         });
     }
@@ -79,8 +76,7 @@ export default class HttpCommunication {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(data),
-        }).catch((error) => {
-            console.log('request failed', error);
+        }).catch(() => {
             this.errorHandler();
         });
     }
@@ -93,9 +89,7 @@ export default class HttpCommunication {
                 'Access-Control-Allow-Origin': this.host,
             },
         })
-            .then((response) => console.log(response.status))
-            .catch((error) => {
-                console.log('request failed', error);
+            .catch(() => {
                 this.errorHandler();
             });
     }
@@ -109,8 +103,7 @@ export default class HttpCommunication {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(data),
-        }).catch((error) => {
-            console.log('request failed', error);
+        }).catch(() => {
             this.errorHandler();
         });
 
@@ -127,9 +120,7 @@ export default class HttpCommunication {
                 'Access-Control-Allow-Origin': this.host,
             },
         })
-            .then((response) => console.log(response.status))
-            .catch((error) => {
-                console.log('request failed', error);
+            .catch(() => {
                 this.errorHandler();
             });
     }

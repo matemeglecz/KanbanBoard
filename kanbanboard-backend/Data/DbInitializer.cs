@@ -12,7 +12,7 @@ namespace KanbanBoardApi.Data
             {
                 throw new ArgumentNullException(nameof(context));
             }
-            // Look for any students.
+            
             if (context.Lanes.Any())
             {
                 return;   // DB has been seeded
@@ -29,19 +29,19 @@ namespace KanbanBoardApi.Data
             context.Lanes.AddRange(boards);
             context.SaveChanges();
 
-            var cards = new Card[]
+            /*var cards = new Card[]
             {
-                new Card{LaneID=1, Title="Fix 1", Description="abrakadabra", Deadline=DateTime.Parse("2020-01-21", CultureInfo.CurrentCulture), Order=0},
-                new Card{LaneID=1, Title="Fix 2", Description="asdasdasd", Deadline=DateTime.Parse("2020-03-21", CultureInfo.CurrentCulture), Order=1},
-                new Card{LaneID=1, Title="Fix 3", Description="ijoijn", Deadline=DateTime.Parse("2025-01-21", CultureInfo.CurrentCulture), Order=2},
-                new Card{LaneID=1, Title="Fix 4", Description="vbcxzubvuizb", Deadline=DateTime.Parse("2040-01-21", CultureInfo.CurrentCulture), Order=3},
-                new Card{LaneID=3, Title="Fix 5", Description="abrakadabra", Deadline=DateTime.Parse("2020-01-21", CultureInfo.CurrentCulture), Order=0},
-                new Card{LaneID=4, Title="Fix 6", Description="njcvnjc", Deadline=DateTime.Parse("2029-01-21", CultureInfo.CurrentCulture), Order=0},
+                new Card{LaneID=1, Title="Fix 1", Description="megjavítani a kódot", Deadline=DateTime.Parse("2020-01-21", CultureInfo.CurrentCulture), Order=0},
+                new Card{LaneID=1, Title="Fix 2", Description="rossz minden", Deadline=DateTime.Parse("2020-03-21", CultureInfo.CurrentCulture), Order=1},
+                new Card{LaneID=1, Title="Fix 3", Description="help", Deadline=DateTime.Parse("2025-01-21", CultureInfo.CurrentCulture), Order=2},
+                new Card{LaneID=1, Title="Fix 4", Description="valami", Deadline=DateTime.Parse("2040-01-21", CultureInfo.CurrentCulture), Order=3},
+                new Card{LaneID=3, Title="Fix 5", Description="", Deadline=DateTime.Parse("2020-01-21", CultureInfo.CurrentCulture), Order=0},
+                new Card{LaneID=4, Title="Fix 6", Description="", Deadline=DateTime.Parse("2029-01-21", CultureInfo.CurrentCulture), Order=0},
                 new Card{LaneID=2, Title="Fix 7", Description="", Deadline=DateTime.Parse("2020-07-21", CultureInfo.CurrentCulture), Order=0},
                 
             };
 
-            context.Cards.AddRange(cards);
+            context.Cards.AddRange(cards); */
             context.SaveChanges();            
         }
     
