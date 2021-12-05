@@ -34,7 +34,7 @@ namespace KanbanBoardApi.Dal
             return card?.GetCardDto();
         }
 
-        public async Task<GetCard> AddCard(GetCard cardDto)
+        public async Task<GetCard> AddCard(AddCard cardDto)
         {
             if (cardDto is null)
             {
@@ -190,8 +190,8 @@ namespace KanbanBoardApi.Dal
         public static GetCard GetCardDto(this Card dbRecord) 
             => new GetCard(dbRecord.ID, dbRecord.Title, dbRecord.LaneID, dbRecord.Description, dbRecord.Order, dbRecord.Deadline);
 
-        public static Card GetCard(this GetCard dto) 
-            =>  new Card(dto.Id, dto.Title, dto.LaneID, dto.Deadline, dto.Description);
+        public static Card GetCard(this AddCard dto) 
+            =>  new Card(dto.Title, dto.LaneID, dto.Deadline, dto.Description);
 
 
         

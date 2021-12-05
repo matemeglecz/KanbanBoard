@@ -23,13 +23,21 @@ namespace KanbanBoardApi.Data
         public Lane Lane { get; set; }
 
         public Card() { }
-        public Card(int id, string title, int laneID, DateTime? deadline, string description = null)
+        public Card(int id, string title, int laneID, DateTime? deadline, string description)
         {
             ID = id;
             Title = title;
             LaneID = laneID;
+            Deadline = deadline;           
+            Description = description == null ? "" : description;
+        }
+
+        public Card(string title, int laneID, DateTime? deadline, string description)
+        {
+            Title = title;
+            LaneID = laneID;
             Deadline = deadline;
-            Description = Description == null ? "" : description;
+            Description = description == null ? "" : description;
         }
     }
 }

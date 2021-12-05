@@ -7,10 +7,7 @@ namespace KanbanBoardApi.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            if (migrationBuilder is null)
-            {
-                throw new ArgumentNullException(nameof(migrationBuilder));
-            }
+            if(migrationBuilder == null) { throw new ArgumentNullException(nameof(migrationBuilder)); }
 
             migrationBuilder.CreateTable(
                 name: "Lane",
@@ -57,10 +54,7 @@ namespace KanbanBoardApi.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            if (migrationBuilder is null)
-            {
-                throw new ArgumentNullException(nameof(migrationBuilder));
-            }
+            if (migrationBuilder == null) { throw new ArgumentNullException(nameof(migrationBuilder)); }
 
             migrationBuilder.DropTable(
                 name: "Card");

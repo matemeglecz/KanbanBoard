@@ -9,7 +9,7 @@ namespace KanbanBoardApi.Dal
         public Task<IReadOnlyCollection<GetCard>> ListCards();
 
         public Task<GetCard> GetCardOrNull(int id);
-        public Task<GetCard> AddCard(GetCard cardDto);
+        public Task<GetCard> AddCard(AddCard cardDto);
         public Task<bool> DeleteCard(int id);
         public Task<bool> EditCard(EditCard newCardDto);
         public Task<bool> MoveCard(MoveCard newCardDto);

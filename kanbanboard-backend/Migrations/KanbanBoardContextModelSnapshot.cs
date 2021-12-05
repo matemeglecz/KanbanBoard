@@ -19,7 +19,7 @@ namespace KanbanBoardApi.Migrations
                 .HasAnnotation("ProductVersion", "5.0.11")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("KanbanBoardApi.Dlo.CardDto", b =>
+            modelBuilder.Entity("KanbanBoardApi.Data.Card", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -49,10 +49,10 @@ namespace KanbanBoardApi.Migrations
 
                     b.HasIndex("LaneID");
 
-                    b.ToTable("CardDto");
+                    b.ToTable("Card");
                 });
 
-            modelBuilder.Entity("KanbanBoardApi.Dlo.Lane", b =>
+            modelBuilder.Entity("KanbanBoardApi.Data.Lane", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -71,9 +71,9 @@ namespace KanbanBoardApi.Migrations
                     b.ToTable("Lane");
                 });
 
-            modelBuilder.Entity("KanbanBoardApi.Dlo.CardDto", b =>
+            modelBuilder.Entity("KanbanBoardApi.Data.Card", b =>
                 {
-                    b.HasOne("KanbanBoardApi.Dlo.Lane", "Lane")
+                    b.HasOne("KanbanBoardApi.Data.Lane", "Lane")
                         .WithMany("Cards")
                         .HasForeignKey("LaneID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -82,7 +82,7 @@ namespace KanbanBoardApi.Migrations
                     b.Navigation("Lane");
                 });
 
-            modelBuilder.Entity("KanbanBoardApi.Dlo.Lane", b =>
+            modelBuilder.Entity("KanbanBoardApi.Data.Lane", b =>
                 {
                     b.Navigation("Cards");
                 });
