@@ -45,8 +45,16 @@ namespace KanbanBoardApi.Dal
 
             try
             {
-                var maxOrder = db.Cards.Where(c => c.LaneID == cardDto.LaneID).Max(c => c.Order);
-                newCard.Order = maxOrder + 1;
+                var maxOrderBool = db.Cards.Where(c => c.LaneID == cardDto.LaneID).Any();
+                var maxOrder = 0;
+                if (maxOrderBool)
+                {
+                    maxOrder = db.Cards.Where(c => c.LaneID == cardDto.LaneID).Max(c => c.Order);
+                    newCard.Order = maxOrder + 1;
+                } else
+                {
+                    newCard.Order = 0;
+                }
             }
             catch (ArgumentNullException)
             {
